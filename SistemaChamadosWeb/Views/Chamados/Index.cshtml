@@ -1,0 +1,37 @@
+﻿@model IEnumerable<SistemaChamadosWeb.Models.Chamado>
+
+@{
+    ViewData["Title"] = "Lista de Chamados";
+}
+
+<h2>Chamados</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Status</th>
+            <th>Prioridade</th>
+            <th>Data Abertura</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var chamado in Model)
+        {
+            <tr>
+                <td>@chamado.Id</td>
+                <td>@chamado.Titulo</td>
+                <td>@chamado.Status</td>
+                <td>@chamado.Prioridade</td>
+                <td>@chamado.DataAbertura.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@chamado.Id">
+                        Ver Detalhes
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

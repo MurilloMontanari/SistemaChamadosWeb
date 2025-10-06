@@ -1,0 +1,26 @@
+﻿@model SistemaChamadosWeb.Models.Chamado
+
+<h2>Abrir Novo Chamado</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Titulo"></label>
+        <input asp-for="Titulo" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Descricao"></label>
+        <textarea asp-for="Descricao" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Prioridade"></label>
+        <select asp-for="Prioridade" class="form-control">
+            <option value="Baixa">Baixa</option>
+            <option value="Média">Média</option>
+            <option value="Alta">Alta</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Abrir Chamado</button>
+</form>
