@@ -1,26 +1,46 @@
 ﻿@model SistemaChamadosWeb.Models.Chamado
 
-<h2>Abrir Novo Chamado</h2>
+@{
+    ViewData["Title"] = "Abrir Chamado";
+}
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="Titulo"></label>
-        <input asp-for="Titulo" class="form-control" />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-sm-10 col-12">
+            <div class="card shadow p-4 rounded-4">
+                <h3 class="text-center mb-4 text-primary fw-bold">Abrir Novo Chamado</h3>
+
+                <form asp-action="Create" asp-controller="Chamados" method="post">
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-semibold">Título</label>
+                        <input name="titulo" class="form-control form-control-lg" placeholder="Descreva brevemente o problema" required />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-semibold">Descrição</label>
+                        <textarea name="descricao" class="form-control form-control-lg" rows="4" placeholder="Explique o problema com mais detalhes" required></textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-semibold">Prioridade</label>
+                        <select name="prioridade" class="form-select form-select-lg">
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-2 fs-5">
+                        Abrir Chamado
+                    </button>
+
+                    <div class="text-center mt-3">
+                        <a asp-action="Index" class="text-decoration-none text-light">
+                            ← Voltar para lista de chamados
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Descricao"></label>
-        <textarea asp-for="Descricao" class="form-control"></textarea>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Prioridade"></label>
-        <select asp-for="Prioridade" class="form-control">
-            <option value="Baixa">Baixa</option>
-            <option value="Média">Média</option>
-            <option value="Alta">Alta</option>
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-success">Abrir Chamado</button>
-</form>
+</div>
