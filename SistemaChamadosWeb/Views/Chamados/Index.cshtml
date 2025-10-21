@@ -1,44 +1,67 @@
 ﻿@model IEnumerable<SistemaChamadosWeb.Models.Chamado>
 
 @{
-    ViewData["Title"] = "Lista de Chamados";
+    ViewData["Title"] = "Chamados";
 }
 
-<h2>Chamados</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">📋 Meus Chamados</h2>
+        <a asp-action="Create" class="btn btn-success px-4 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i> Abrir Chamado
+        </a>
+    </div>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="text-primary fw-bold">Chamados</h2>
-    <a asp-action="Create" class="btn btn-success btn-lg shadow-sm">
-        <i class="bi bi-plus-circle"></i> Abrir Chamado
-    </a>
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm">
+            Nenhum chamado encontrado 😕
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded-3">
+            <table class="table align-middle table-hover mb-0">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Status</th>
+                        <th>Prioridade</th>
+                        <th>Data de Abertura</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var chamado in Model)
+                    {
+                        var statusClass = chamado.Status switch
+                        {
+                            "Aberto" => "badge bg-success",
+                            "Em Andamento" => "badge bg-warning text-dark",
+                            "Fechado" => "badge bg-secondary",
+                            _ => "badge bg-light text-dark"
+                        };
+
+                        <tr class="text-center">
+                            <td>@chamado.Id</td>
+                            <td class="text-start fw-semibold">@chamado.Titulo</td>
+                            <td><span class="@statusClass">@chamado.Status</span></td>
+                            <td>@chamado.Prioridade</td>
+                            <td>@chamado.DataAbertura.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@chamado.Id"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Detalhes
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Status</th>
-            <th>Prioridade</th>
-            <th>Data Abertura</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var chamado in Model)
-        {
-            <tr>
-                <td>@chamado.Id</td>
-                <td>@chamado.Titulo</td>
-                <td>@chamado.Status</td>
-                <td>@chamado.Prioridade</td>
-                <td>@chamado.DataAbertura.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>
-                    <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@chamado.Id">
-                        Ver Detalhes
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Ícones Bootstrap -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
