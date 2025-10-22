@@ -1,46 +1,34 @@
-﻿@model SistemaChamadosWeb.Models.Chamado
-
-@{
+﻿@{
     ViewData["Title"] = "Abrir Chamado";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-sm-10 col-12">
-            <div class="card shadow p-4 rounded-4">
-                <h3 class="text-center mb-4 text-primary fw-bold">Abrir Novo Chamado</h3>
+<div class="card shadow-lg border-0 p-4" style="border-radius: 15px; max-width: 700px; margin: 40px auto;">
+    <h3 class="text-center text-primary mb-4">
+        <i class="bi bi-plus-circle"></i> Abrir Novo Chamado
+    </h3>
 
-                <form asp-action="Create" asp-controller="Chamados" method="post">
-                    <div class="form-group mb-3">
-                        <label class="form-label fw-semibold">Título</label>
-                        <input name="titulo" class="form-control form-control-lg" placeholder="Descreva brevemente o problema" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label fw-semibold">Descrição</label>
-                        <textarea name="descricao" class="form-control form-control-lg" rows="4" placeholder="Explique o problema com mais detalhes" required></textarea>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label fw-semibold">Prioridade</label>
-                        <select name="prioridade" class="form-select form-select-lg">
-                            <option value="Baixa">Baixa</option>
-                            <option value="Média">Média</option>
-                            <option value="Alta">Alta</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-success w-100 py-2 fs-5">
-                        Abrir Chamado
-                    </button>
-
-                    <div class="text-center mt-3">
-                        <a asp-action="Index" class="text-decoration-none text-light">
-                            ← Voltar para lista de chamados
-                        </a>
-                    </div>
-                </form>
-            </div>
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Título</label>
+            <input type="text" name="titulo" class="form-control" placeholder="Digite um título para o chamado" required />
         </div>
-    </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Descrição</label>
+            <textarea name="descricao" class="form-control" rows="4" placeholder="Descreva o problema ou solicitação" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Prioridade</label>
+            <select name="prioridade" class="form-select">
+                <option value="Baixa">Baixa</option>
+                <option value="Média" selected>Média</option>
+                <option value="Alta">Alta</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-2">
+            <i class="bi bi-send"></i> Criar Chamado
+        </button>
+    </form>
 </div>

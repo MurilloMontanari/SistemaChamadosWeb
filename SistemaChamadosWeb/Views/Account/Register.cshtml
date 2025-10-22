@@ -1,42 +1,43 @@
 ﻿@{
-    ViewData["Title"] = "Cadastro de Usuário";
+    ViewData["Title"] = "Registrar";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card mt-4">
-            <div class="card-body">
-                <h4 class="card-title mb-3">Criar Conta</h4>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="card shadow-lg border-0 p-4" style="width: 420px; border-radius: 15px;">
+        <h3 class="text-center mb-4 text-success">
+            <i class="bi bi-person-plus"></i> Criar Conta
+        </h3>
 
-                @if (ViewBag.Erro != null)
-                {
-                    <div class="alert alert-danger">@ViewBag.Erro</div>
-                }
+        @if (ViewBag.Erro != null)
+        {
+            <div class="alert alert-danger text-center">@ViewBag.Erro</div>
+        }
 
-                <form asp-action="Register" method="post">
-                    <div class="mb-3">
-                        <label class="form-label">Nome</label>
-                        <input type="text" name="nome" class="form-control" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Senha</label>
-                        <input type="password" name="senha" class="form-control" required />
-                    </div>
-
-                    <button type="submit" class="btn btn-success w-100">Cadastrar</button>
-                </form>
-
-                <hr />
-                <p class="text-center">
-                    Já tem conta? <a href="/Account/Login">Faça login</a>
-                </p>
+        <form asp-action="Register" method="post">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Nome</label>
+                <input type="text" name="nome" class="form-control" placeholder="Digite seu nome completo" required />
             </div>
-        </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">E-mail</label>
+                <input type="email" name="email" class="form-control" placeholder="Digite seu e-mail" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Senha</label>
+                <input type="password" name="senha" class="form-control" placeholder="Crie uma senha" required />
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 mb-3">
+                <i class="bi bi-check2-circle"></i> Registrar
+            </button>
+
+            <div class="text-center">
+                <a asp-action="Login" class="text-decoration-none text-secondary">
+                    <i class="bi bi-arrow-left"></i> Já tem conta? Faça login
+                </a>
+            </div>
+        </form>
     </div>
 </div>
