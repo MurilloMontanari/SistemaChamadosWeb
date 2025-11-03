@@ -11,15 +11,26 @@ namespace SistemaChamadosWeb.Controllers
         public ChamadosController(AppDbContext db) => _db = db;
 
         private int? UsuarioId => HttpContext.Session.GetInt32("UsuarioId");
+        private string UsuarioTipo => HttpContext.Session.GetString("UsuarioTipo") ?? "Usuario";
+        private bool IsAdmin => UsuarioTipo == "Admin";
 
         public async Task<IActionResult> Index()
         {
-            var chamados = await _db.Chamados
+            if (UsuarioId == null) return RedirectToAction("Login", "Account");
+
+            IQueryable<Chamado> query = _db.Chamados;
+
+            if (!IsAdmin)
+                query = query.Where(c => c.UsuarioId == UsuarioId);
+
+            var chamados = await query
                 .OrderByDescending(c => c.DataAbertura)
                 .ToListAsync();
 
             return View(chamados);
         }
+
+        
         // GET: Chamados/MeusChamados
         public async Task<IActionResult> MeusChamados()
         {
@@ -64,17 +75,114 @@ namespace SistemaChamadosWeb.Controllers
         // GET: /Chamados/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var chamado = await _db.Chamados
-                                   .Include(c => c.Usuario) // agora sim!
-                                   .FirstOrDefaultAsync(c => c.Id == id);
+            if (UsuarioId == null) return RedirectToAction("Login", "Account");
 
-            if (chamado == null)
-            {
-                return NotFound();
-            }
+            var chamado = await _db.Chamados
+                .Include(c => c.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (chamado == null) return NotFound();
+
+            // regra: usuário comum só pode ver o próprio chamado
+            if (!IsAdmin && chamado.UsuarioId != UsuarioId.Value)
+                return Forbid();
+
+            // carregar comentários do chamado (mais recentes primeiro)
+            var comentarios = await _db.Comentarios
+                .Where(cc => cc.ChamadoId == id)
+                .OrderByDescending(cc => cc.DataHora)
+                .Include(cc => cc.Usuario)
+                .ToListAsync();
+
+            ViewBag.Comentarios = comentarios;
+            ViewBag.IsAdmin = IsAdmin;
 
             return View(chamado);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdicionarComentario(int chamadoId, string texto)
+        {
+            if (UsuarioId == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!IsAdmin)
+                return Forbid(); // apenas o TI pode comentar
+
+            if (string.IsNullOrWhiteSpace(texto))
+            {
+                TempData["MensagemErro"] = "O comentário não pode estar vazio.";
+                return RedirectToAction("Details", new { id = chamadoId });
+            }
+
+            var chamado = await _db.Chamados.FindAsync(chamadoId);
+            if (chamado == null)
+                return NotFound();
+
+            // 🚫 Bloqueia se o chamado já estiver fechado
+            if (chamado.Status == "Fechado")
+            {
+                TempData["MensagemErro"] = "Não é possível adicionar comentários em chamados finalizados.";
+                return RedirectToAction("Details", new { id = chamadoId });
+            }
+
+            // Se passou por todas as validações, cria o comentário
+            var comentario = new ChamadoComentario
+            {
+                ChamadoId = chamadoId,
+                UsuarioId = UsuarioId.Value,
+                Texto = texto.Trim(),
+                DataHora = DateTime.UtcNow
+            };
+
+            _db.Comentarios.Add(comentario);
+            await _db.SaveChangesAsync();
+
+            TempData["MensagemSucesso"] = "Comentário adicionado com sucesso!";
+            return RedirectToAction("Details", new { id = chamadoId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlterarStatus(int id, string novoStatus)
+        {
+            var chamado = await _db.Chamados.FindAsync(id);
+            if (chamado == null) return NotFound();
+
+            // Validação: não permite alterar se estiver fechado
+            if (chamado.Status == "Fechado")
+            {
+                TempData["MensagemErro"] = "O chamado já está finalizado e não pode ser alterado.";
+                return RedirectToAction("Details", new { id });
+            }
+
+            chamado.Status = novoStatus;
+            await _db.SaveChangesAsync();
+
+            TempData["MensagemSucesso"] = "Status atualizado com sucesso!";
+            return RedirectToAction("Details", new { id });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FinalizarChamado(int id)
+        {
+            var chamado = await _db.Chamados.FindAsync(id);
+            if (chamado == null) return NotFound();
+
+            if (chamado.Status == "Fechado")
+            {
+                TempData["MensagemErro"] = "Este chamado já foi encerrado anteriormente.";
+                return RedirectToAction("Details", new { id });
+            }
+
+            chamado.Status = "Fechado";
+            await _db.SaveChangesAsync();
+
+            TempData["MensagemSucesso"] = "Chamado finalizado com sucesso!";
+            return RedirectToAction("Details", new { id });
+        }
+
 
 
     }

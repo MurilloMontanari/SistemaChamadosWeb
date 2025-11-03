@@ -39,6 +39,7 @@ namespace SistemaChamadosWeb.Controllers
             // LOGIN OK
             HttpContext.Session.SetInt32("UsuarioId", user.Id);
             HttpContext.Session.SetString("UsuarioNome", user.Nome);
+            HttpContext.Session.SetString("UsuarioTipo", user.Tipo);
 
             return RedirectToAction("Index", "Chamados");
         }
@@ -54,26 +55,49 @@ namespace SistemaChamadosWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(string nome, string email, string senha)
         {
-            // verifica se já existe
+            // valida campos obrigatórios
+            if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
+            {
+                TempData["MensagemErro"] = "Todos os campos são obrigatórios.";
+                return RedirectToAction("Register");
+            }
+
+            // valida formato do e-mail
+            if (!System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                TempData["MensagemErro"] = "Informe um e-mail válido.";
+                return RedirectToAction("Register");
+            }
+
+            // valida senha mínima
+            if (senha.Length < 6)
+            {
+                TempData["MensagemErro"] = "A senha deve ter pelo menos 6 caracteres.";
+                return RedirectToAction("Register");
+            }
+
             var existente = await _db.Usuarios.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
             if (existente != null)
             {
-                ViewBag.Erro = "Já existe uma conta com este email.";
-                return View();
+                TempData["MensagemErro"] = "Já existe uma conta com este e-mail.";
+                return RedirectToAction("Register");
             }
 
             var novoUsuario = new Usuario
             {
                 Nome = nome,
                 Email = email,
-                Senha = senha // aqui está em texto puro, depois podemos melhorar
+                Senha = senha,
+                Tipo = "Usuario"
             };
 
             _db.Usuarios.Add(novoUsuario);
             await _db.SaveChangesAsync();
 
-            ViewBag.Sucesso = "Conta criada com sucesso! Agora faça login.";
+            TempData["MensagemSucesso"] = "Conta criada com sucesso! Agora faça login.";
             return RedirectToAction("Login");
         }
+
+
     }
 }

@@ -1,22 +1,182 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+﻿/* 🌐 Layout Global */
 body {
-  margin-bottom: 60px;
+    background: #f6f8fb;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🔷 Navbar moderna */
+.navbar {
+    background: linear-gradient(90deg, #007bff, #0056d6);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: white !important;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    margin-right: 15px;
+    transition: 0.3s;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #d1ecff !important;
+    }
+
+.nav-user {
+    color: #e6f0ff !important;
+    font-style: italic;
+}
+
+/* 🧱 Cards e Containers */
+.container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    margin-top: 30px;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+    }
+
+/* 🟢 Botões */
+.btn-success {
+    background: linear-gradient(90deg, #00c851, #007e33);
+    border: none;
+    transition: 0.3s;
+}
+
+    .btn-success:hover {
+        background: linear-gradient(90deg, #007e33, #006622);
+        transform: scale(1.02);
+    }
+
+.btn-primary {
+    background: linear-gradient(90deg, #007bff, #0056d6);
+    border: none;
+    transition: 0.3s;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #0056d6, #0043b8);
+        transform: scale(1.02);
+    }
+
+.btn-outline-secondary:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+/* ⚠️ Alertas bonitos */
+.alert {
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    animation: fadeInDown 0.6s ease;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* 🧾 Formulários */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px 12px;
+    transition: all 0.3s;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+    }
+
+/* 📱 Responsividade */
+@media (max-width: 768px) {
+    .container {
+        margin-top: 15px;
+        padding: 15px;
+    }
+
+    .card {
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    footer {
+        font-size: 0.8rem;
+    }
+}
+
+/* ✨ Animações */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 🦶 Rodapé */
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 15px 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+.card {
+    border: none;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.btn-success {
+    background: linear-gradient(90deg, #00b36b, #007a4d);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+    .btn-success:hover {
+        background: linear-gradient(90deg, #00995a, #00663c);
+    }
+
+.text-primary {
+    color: #007bff !important;
 }

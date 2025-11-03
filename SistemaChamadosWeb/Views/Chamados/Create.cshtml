@@ -2,33 +2,40 @@
     ViewData["Title"] = "Abrir Chamado";
 }
 
-<div class="card shadow-lg border-0 p-4" style="border-radius: 15px; max-width: 700px; margin: 40px auto;">
-    <h3 class="text-center text-primary mb-4">
-        <i class="bi bi-plus-circle"></i> Abrir Novo Chamado
-    </h3>
-
-    <form asp-action="Create" method="post">
-        <div class="mb-3">
-            <label class="form-label fw-semibold">Título</label>
-            <input type="text" name="titulo" class="form-control" placeholder="Digite um título para o chamado" required />
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold text-primary">
+                <i class="bi bi-plus-circle"></i> Abrir Novo Chamado
+            </h4>
+            <p class="text-muted">Preencha os campos abaixo para registrar um novo chamado</p>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-semibold">Descrição</label>
-            <textarea name="descricao" class="form-control" rows="4" placeholder="Descreva o problema ou solicitação" required></textarea>
-        </div>
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Título</label>
+                <input type="text" name="titulo" class="form-control form-control-lg shadow-sm" placeholder="Digite um título para o chamado" required />
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-semibold">Prioridade</label>
-            <select name="prioridade" class="form-select">
-                <option value="Baixa">Baixa</option>
-                <option value="Média" selected>Média</option>
-                <option value="Alta">Alta</option>
-            </select>
-        </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Descrição</label>
+                <textarea name="descricao" class="form-control shadow-sm" rows="4" placeholder="Descreva o problema ou solicitação" required></textarea>
+            </div>
 
-        <button type="submit" class="btn btn-primary w-100 mt-2">
-            <i class="bi bi-send"></i> Criar Chamado
-        </button>
-    </form>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Prioridade</label>
+                <select name="prioridade" class="form-select shadow-sm">
+                    <option>Baixa</option>
+                    <option>Média</option>
+                    <option>Alta</option>
+                </select>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                    <i class="bi bi-send"></i> Criar Chamado
+                </button>
+            </div>
+        </form>
+    </div>
 </div>

@@ -3,11 +3,11 @@ using SistemaChamadosWeb.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DB
+// Banco de Dados
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Sessions (simples auth)
+// Sessão (autenticação simples)
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -15,11 +15,13 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
 });
 
-// MVC + Razor
-builder.Services.AddControllersWithViews();
+// MVC + Razor + suporte ao TempData via Session
+builder.Services.AddControllersWithViews()
+    .AddSessionStateTempDataProvider();
 
 var app = builder.Build();
 
+// Configurações de erro e HTTPS
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -30,8 +32,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Ativa sessões (obrigatório antes das rotas)
 app.UseSession();
 
+app.UseAuthorization();
+
+// Rota padrão
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");

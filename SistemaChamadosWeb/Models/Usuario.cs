@@ -20,5 +20,8 @@ namespace SistemaChamadosWeb.Models
         public string Senha { get; set; }
 
         public List<Chamado> Chamados { get; set; }  // Navegação para os chamados do usuário
+
+        [Column("tipo")]    
+        public string Tipo { get; set; } = "Usuario";
     }
 }

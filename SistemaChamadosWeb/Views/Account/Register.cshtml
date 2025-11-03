@@ -2,8 +2,8 @@
     ViewData["Title"] = "Registrar";
 }
 
-<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
-    <div class="card shadow-lg border-0 p-4" style="width: 420px; border-radius: 15px;">
+<div class="d-flex justify-content-center align-items-center full-height">
+    <div class="card shadow-lg border-0 p-4" style="width: 420px; border-radius: 15px; min-height: 460px;">
         <h3 class="text-center mb-4 text-success">
             <i class="bi bi-person-plus"></i> Criar Conta
         </h3>
@@ -13,25 +13,58 @@
             <div class="alert alert-danger text-center">@ViewBag.Erro</div>
         }
 
+        @if (TempData["MensagemSucesso"] != null)
+        {
+            <div id="alertaSucesso" class="alert alert-success shadow-sm text-center d-flex align-items-center justify-content-center gap-2 animate__animated animate__fadeInDown"
+                 role="alert" style="border-radius:10px;">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <span>@TempData["MensagemSucesso"]</span>
+            </div>
+        }
+
+        @if (TempData["MensagemErro"] != null)
+        {
+            <div id="alertaErro" class="alert alert-danger shadow-sm text-center d-flex align-items-center justify-content-center gap-2 animate__animated animate__fadeInDown"
+                 role="alert" style="border-radius:10px;">
+                <i class="bi bi-x-circle-fill fs-5"></i>
+                <span>@TempData["MensagemErro"]</span>
+            </div>
+        }
+
+        <script>
+            // Faz os alertas sumirem suavemente após 4 segundos
+            setTimeout(() => {
+                const alertaSucesso = document.getElementById('alertaSucesso');
+                const alertaErro = document.getElementById('alertaErro');
+
+                [alertaSucesso, alertaErro].forEach(alerta => {
+                    if (alerta) {
+                        alerta.classList.add('animate__fadeOutUp');
+                        setTimeout(() => alerta.remove(), 1000);
+                    }
+                });
+            }, 4000);
+        </script>
         <form asp-action="Register" method="post">
             <div class="mb-3">
                 <label class="form-label fw-semibold">Nome</label>
-                <input type="text" name="nome" class="form-control" placeholder="Digite seu nome completo" required />
+                <input type="text" name="nome" class="form-control form-control-lg" placeholder="Digite seu nome completo" required />
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-semibold">E-mail</label>
-                <input type="email" name="email" class="form-control" placeholder="Digite seu e-mail" required />
+                <input type="email" name="email" class="form-control form-control-lg" placeholder="Digite seu e-mail" required />
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-semibold">Senha</label>
-                <input type="password" name="senha" class="form-control" placeholder="Crie uma senha" required />
+                <input type="password" name="senha" class="form-control form-control-lg" placeholder="Crie uma senha" required />
             </div>
 
-            <button type="submit" class="btn btn-success w-100 mb-3">
+            <button type="submit" class="btn btn-success btn-lg w-100 mb-3">
                 <i class="bi bi-check2-circle"></i> Registrar
             </button>
+
 
             <div class="text-center">
                 <a asp-action="Login" class="text-decoration-none text-secondary">

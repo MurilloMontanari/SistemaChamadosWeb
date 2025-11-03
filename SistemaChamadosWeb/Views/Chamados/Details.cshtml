@@ -1,15 +1,127 @@
-﻿@model SistemaChamadosWeb.Models.Chamado
+﻿   @model SistemaChamadosWeb.Models.Chamado
+@{
+    ViewData["Title"] = "Detalhes do Chamado";
+    var comentarios = ViewBag.Comentarios as List<SistemaChamadosWeb.Models.ChamadoComentario>;
+    bool isAdmin = ViewBag.IsAdmin == true;
 
-<h2>Detalhes do Chamado</h2>
+    @if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-success text-center shadow-sm mb-4 animate__animated animate__fadeInDown"
+         style="max-width:900px;margin:20px auto;border-radius:10px;">
+        <i class="bi bi-check-circle-fill"></i>
+        @TempData["MensagemSucesso"]
+    </div>
+}
 
-<p><strong>Título:</strong> @Model.Titulo</p>
-<p><strong>Descrição:</strong> @Model.Descricao</p>
-<p><strong>Status:</strong> @Model.Status</p>
-<p><strong>Prioridade:</strong> @Model.Prioridade</p>
-<p><strong>Data de Abertura:</strong> @Model.DataAbertura</p>
+@if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger text-center shadow-sm mb-4 animate__animated animate__fadeInDown"
+         style="max-width:900px;margin:20px auto;border-radius:10px;">
+        <i class="bi bi-x-circle-fill"></i>
+        @TempData["MensagemErro"]
+    </div>
+}
 
-<hr />
+<script>
+    //some sozinho depois de 4s com fade pra cima 
+    setTimeout(() => {
+        document.querySelectorAll('.alert').forEach(el => {
+            el.classList.add('animate__fadeOutUp');
+            setTimeout(() => el.remove(), 800);
+        });
+    }, 4000);
+</script>
+}
 
-<p><strong>Aberto por:</strong> @Model.Usuario.Nome (@Model.Usuario.Email)</p>
+<div class="container">
+    <div class="card shadow-sm p-4 mb-4">
+        <h3 class="mb-3">
+            <i class="bi bi-ticket-detailed"></i> @Model.Titulo
+        </h3>
+        <p><strong>Descrição:</strong> @Model.Descricao</p>
+        <p><strong>Status:</strong> <span class="badge bg-primary">@Model.Status</span></p>
+        <p><strong>Prioridade:</strong> @Model.Prioridade</p>
+        <p><strong>Data de Abertura:</strong> @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")</p>
+        <p><strong>Aberto por:</strong> @Model.Usuario?.Nome (@Model.Usuario?.Email)</p>
 
-<a asp-action="Index">Voltar para a lista</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card shadow-sm p-3">
+                <h5 class="mb-3"><i class="bi bi-chat-dots"></i> Comentários</h5>
+
+                @if (comentarios == null || comentarios.Count == 0)
+                {
+                    <div class="alert alert-info">Ainda não há comentários.</div>
+                }
+                else
+                {
+                    <ul class="list-group">
+                        @foreach (var c in comentarios)
+                        {
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@c.Usuario?.Nome</strong>
+                                    <span class="text-muted">@c.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <div>@c.Texto</div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        @if (isAdmin)
+        {
+            <div class="col-lg-5">
+                <div class="card shadow-sm p-3">
+                    <h5 class="mb-3"><i class="bi bi-tools"></i> Ações do TI</h5>
+
+                    <!-- alterar status -->
+                    <form asp-action="AlterarStatus" method="post" class="mb-3">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="input-group">
+                            <select name="novoStatus" class="form-select">
+                                <option value="Aberto" selected="@(Model.Status == "Aberto")">Aberto</option>
+                                <option value="Em Andamento" selected="@(Model.Status == "Em Andamento")">Em Andamento</option>
+                                <option value="Fechado" selected="@(Model.Status == "Fechado")">Fechado</option>
+                            </select>
+
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Atualizar</button>
+                        </div>
+                    </form>
+
+                    <!-- adicionar comentário -->
+                    <form asp-action="AdicionarComentario" method="post">
+                        <input type="hidden" name="chamadoId" value="@Model.Id" />
+                        <div class="mb-2">
+                            <label class="form-label">Novo comentário</label>
+                            <textarea name="texto" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-chat-right-text"></i> Adicionar Comentário
+                        </button>
+                    </form>
+                    <!--Finalizar Chamado-->
+                    @if (Context.Session.GetString("UsuarioTipo") == "Admin")
+                    {
+                        <form asp-action="FinalizarChamado" method="post" >
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-check2-circle"></i> Finalizar Chamado
+                            </button>
+                        </form>
+                    }
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
