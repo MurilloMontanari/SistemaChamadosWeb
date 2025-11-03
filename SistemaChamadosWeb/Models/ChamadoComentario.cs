@@ -15,13 +15,13 @@ namespace SistemaChamadosWeb.Models
         public int UsuarioId { get; set; }
 
         [Column("texto")]
-        public string Texto { get; set; }
+        public string Texto { get; set; } = string.Empty;
 
         [Column("datahora")]
         public DateTime DataHora { get; set; } = DateTime.UtcNow;
 
         // navegações (opcional, mas útil)
-        public Chamado Chamado { get; set; }
-        public Usuario Usuario { get; set; }
+        public Chamado Chamado { get; set; } = null!;
+        public Usuario Usuario { get; set; } = null!;
     }
 }

@@ -80,23 +80,9 @@
         {
             <div class="col-lg-5">
                 <div class="card shadow-sm p-3">
-                    <h5 class="mb-3"><i class="bi bi-tools"></i> Ações do TI</h5>
+                    <h5 class="mb-3"><i class="bi bi-tools"></i> Meu Painel</h5>
 
-                    <!-- alterar status -->
-                    <form asp-action="AlterarStatus" method="post" class="mb-3">
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        <div class="input-group">
-                            <select name="novoStatus" class="form-select">
-                                <option value="Aberto" selected="@(Model.Status == "Aberto")">Aberto</option>
-                                <option value="Em Andamento" selected="@(Model.Status == "Em Andamento")">Em Andamento</option>
-                                <option value="Fechado" selected="@(Model.Status == "Fechado")">Fechado</option>
-                            </select>
-
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Atualizar</button>
-                        </div>
-                    </form>
-
-                    <!-- adicionar comentário -->
+                    <!-- Adicionar Comentário -->
                     <form asp-action="AdicionarComentario" method="post">
                         <input type="hidden" name="chamadoId" value="@Model.Id" />
                         <div class="mb-2">
@@ -107,20 +93,48 @@
                             <i class="bi bi-chat-right-text"></i> Adicionar Comentário
                         </button>
                     </form>
-                    <!--Finalizar Chamado-->
+
+                    <!-- Finalizar Chamado -->
                     @if (Context.Session.GetString("UsuarioTipo") == "Admin")
                     {
-                        <form asp-action="FinalizarChamado" method="post" >
-                            <input type="hidden" name="id" value="@Model.Id" />
-                            <button type="submit" class="btn btn-danger w-100">
-                                <i class="bi bi-check2-circle"></i> Finalizar Chamado
-                            </button>
-                        </form>
+                        <!-- Botão que abre o modal -->
+                        <button type="button" class="btn btn-danger w-100 mt-3" data-bs-toggle="modal" data-bs-target="#finalizarModal">
+                            <i class="bi bi-check2-circle"></i> Finalizar Chamado
+                        </button>
                     }
+
 
                 </div>
             </div>
         }
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="finalizarModal" tabindex="-1" aria-labelledby="finalizarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="finalizarModalLabel">
+                        <i class="bi bi-clipboard-check"></i> Finalizar Chamado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-action="FinalizarChamado" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Motivo:</label>
+                            <textarea name="motivo" id="motivo" class="form-control" rows="4" placeholder="Descreva o que foi feito para encerrar o chamado..." required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger">Finalizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

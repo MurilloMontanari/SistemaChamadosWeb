@@ -127,14 +127,21 @@ namespace SistemaChamadosWeb.Controllers
                 return RedirectToAction("Details", new { id = chamadoId });
             }
 
-            // Se passou por todas as validações, cria o comentário
+            // ⚙️ Se o chamado estiver "Aberto", muda automaticamente para "Em Andamento"
+            if (chamado.Status == "Aberto")
+            {
+                chamado.Status = "Em Andamento";
+                _db.Chamados.Update(chamado);
+            }
+
+            // Cria o comentário
             var comentario = new ChamadoComentario
             {
                 ChamadoId = chamadoId,
                 UsuarioId = UsuarioId.Value,
                 Texto = texto.Trim(),
                 DataHora = DateTime.UtcNow
-            };
+             };
 
             _db.Comentarios.Add(comentario);
             await _db.SaveChangesAsync();
@@ -142,6 +149,7 @@ namespace SistemaChamadosWeb.Controllers
             TempData["MensagemSucesso"] = "Comentário adicionado com sucesso!";
             return RedirectToAction("Details", new { id = chamadoId });
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -165,8 +173,11 @@ namespace SistemaChamadosWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FinalizarChamado(int id)
+        public async Task<IActionResult> FinalizarChamado(int id, string motivo)
         {
+            if (UsuarioId == null) return RedirectToAction("Login", "Account");
+            if (!IsAdmin) return Forbid();
+
             var chamado = await _db.Chamados.FindAsync(id);
             if (chamado == null) return NotFound();
 
@@ -179,11 +190,23 @@ namespace SistemaChamadosWeb.Controllers
             chamado.Status = "Fechado";
             await _db.SaveChangesAsync();
 
+            // adiciona o comentário final
+            if (!string.IsNullOrWhiteSpace(motivo))
+            {
+                var comentarioFinal = new ChamadoComentario
+                {
+                    ChamadoId = chamado.Id,
+                    UsuarioId = UsuarioId.Value,
+                    Texto = "🧰 " + motivo.Trim(),
+                    DataHora = DateTime.UtcNow
+                };
+                _db.Comentarios.Add(comentarioFinal);
+                await _db.SaveChangesAsync();
+            }
+
             TempData["MensagemSucesso"] = "Chamado finalizado com sucesso!";
             return RedirectToAction("Details", new { id });
         }
-
-
 
     }
 }
