@@ -41,7 +41,7 @@
         <p><strong>Descrição:</strong> @Model.Descricao</p>
         <p><strong>Status:</strong> <span class="badge bg-primary">@Model.Status</span></p>
         <p><strong>Prioridade:</strong> @Model.Prioridade</p>
-        <p><strong>Data de Abertura:</strong> @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")</p>
+        <p><strong>Data de Abertura:</strong> @Model.DataAbertura.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
         <p><strong>Aberto por:</strong> @Model.Usuario?.Nome (@Model.Usuario?.Email)</p>
 
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
@@ -66,7 +66,8 @@
                             <li class="list-group-item">
                                 <div class="d-flex justify-content-between">
                                     <strong>@c.Usuario?.Nome</strong>
-                                    <span class="text-muted">@c.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                                    <span class="text-muted">@c.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                    </span>
                                 </div>
                                 <div>@c.Texto</div>
                             </li>

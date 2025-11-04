@@ -144,6 +144,20 @@ namespace SistemaChamadosWeb.Controllers
              };
 
             _db.Comentarios.Add(comentario);
+            foreach (var entry in _db.ChangeTracker.Entries()
+         .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
+            {
+                var props = entry.Entity.GetType().GetProperties()
+                    .Where(p => p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?));
+
+                foreach (var prop in props)
+                {
+                    var value = prop.GetValue(entry.Entity);
+                    if (value is DateTime dt && dt.Kind == DateTimeKind.Unspecified)
+                        prop.SetValue(entry.Entity, DateTime.SpecifyKind(dt, DateTimeKind.Utc));
+                }
+            }
+
             await _db.SaveChangesAsync();
 
             TempData["MensagemSucesso"] = "Comentário adicionado com sucesso!";
