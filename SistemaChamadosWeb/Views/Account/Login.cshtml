@@ -2,9 +2,9 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="d-flex justify-content-center align-items-center full-height">
-    <div class="card shadow-lg border-0 p-4" style="width: 420px; border-radius: 15px; min-height: 460px;">
-        <h3 class="text-center mb-4 text-sucess">
+<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="card shadow-lg border-0 p-4" style="width: 100%; max-width: 420px; border-radius: 15px;">
+        <h3 class="text-center mb-4 text-success fw-bold">
             <i class="bi bi-box-arrow-in-right"></i> Acesso ao Sistema
         </h3>
 
@@ -33,37 +33,30 @@
 
         <script>
             setTimeout(() => {
-                const alertaSucesso = document.getElementById('alertaSucesso');
-                const alertaErro = document.getElementById('alertaErro');
-
-                [alertaSucesso, alertaErro].forEach(alerta => {
-                    if (alerta) {
-                        alerta.classList.add('animate__fadeOutUp');
-                        setTimeout(() => alerta.remove(), 1000);
-                    }
+                document.querySelectorAll('.alert').forEach(a => {
+                    a.classList.add('animate__fadeOutUp');
+                    setTimeout(() => a.remove(), 800);
                 });
             }, 4000);
         </script>
 
-
         <form asp-action="Login" method="post">
             <div class="mb-3">
                 <label for="email" class="form-label fw-semibold">E-mail</label>
-                <input type="email" id="email" name="email" class="form-control" placeholder="Digite seu e-mail" required />
+                <input type="email" id="email" name="email" class="form-control form-control-lg" placeholder="Digite seu e-mail" required />
             </div>
 
             <div class="mb-3">
                 <label for="senha" class="form-label fw-semibold">Senha</label>
-                <input type="password" id="senha" name="senha" class="form-control" placeholder="Digite sua senha" required />
+                <input type="password" id="senha" name="senha" class="form-control form-control-lg" placeholder="Digite sua senha" required />
             </div>
 
-            <button type="submit" class="btn btn-success w-100">
+            <button type="submit" class="btn btn-success w-100 py-2">
                 <i class="bi bi-box-arrow-in-right"></i> Entrar
             </button>
 
-
-            <div class="text-center mt-2">
-                <a asp-action="Register" class="text-decoration-none text-secondary">
+            <div class="text-center mt-3">
+                <a asp-action="Register" class="text-decoration-none text-secondary fw-semibold">
                     <i class="bi bi-person-plus"></i> Criar nova conta
                 </a>
             </div>

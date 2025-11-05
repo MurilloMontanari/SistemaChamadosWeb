@@ -209,3 +209,35 @@ footer {
         transform: translateY(0);
     }
 }
+/* ===== MOBILE FIX ===== */
+@media (max-width: 576px) {
+
+    .container, .card {
+        padding: 15px !important;
+    }
+
+    h3, h2 {
+        font-size: 1.3rem !important;
+    }
+
+    .btn, button {
+        font-size: 0.9rem !important;
+        padding: 10px !important;
+    }
+
+    table {
+        font-size: 0.82rem !important;
+    }
+
+    textarea, input, select {
+        font-size: 1rem !important;
+    }
+}
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    overflow-y: auto;
+}

@@ -2,40 +2,51 @@
     ViewData["Title"] = "Abrir Chamado";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4 p-4">
-        <div class="text-center mb-4">
-            <h4 class="fw-bold text-primary">
-                <i class="bi bi-plus-circle"></i> Abrir Novo Chamado
-            </h4>
-            <p class="text-muted">Preencha os campos abaixo para registrar um novo chamado</p>
-        </div>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="card shadow-lg border-0 p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
+
+        <h3 class="text-center mb-4 text-primary fw-bold">
+            <i class="bi bi-plus-circle"></i> Abrir Novo Chamado
+        </h3>
+
+        <p class="text-center text-muted mb-4">
+            Preencha os campos abaixo para registrar um novo chamado
+        </p>
 
         <form asp-action="Create" method="post">
+
             <div class="mb-3">
                 <label class="form-label fw-semibold">Título</label>
-                <input type="text" name="titulo" class="form-control form-control-lg shadow-sm" placeholder="Digite um título para o chamado" required />
+                <input type="text" name="titulo" class="form-control form-control-lg"
+                       placeholder="Digite um título para o chamado" required />
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-semibold">Descrição</label>
-                <textarea name="descricao" class="form-control shadow-sm" rows="4" placeholder="Descreva o problema ou solicitação" required></textarea>
+                <textarea name="descricao" class="form-control" rows="4"
+                          placeholder="Descreva o problema ou solicitação" required></textarea>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-4">
                 <label class="form-label fw-semibold">Prioridade</label>
-                <select name="prioridade" class="form-select shadow-sm">
-                    <option>Baixa</option>
+                <select name="prioridade" class="form-select form-select-lg">
                     <option>Média</option>
                     <option>Alta</option>
+                    <option>Baixa</option>
+                    <option>Urgente</option>
                 </select>
             </div>
 
-            <div class="d-grid">
-                <button type="submit" class="btn btn-success btn-lg shadow-sm">
-                    <i class="bi bi-send"></i> Criar Chamado
-                </button>
+            <button type="submit" class="btn btn-success w-100 py-2">
+                <i class="bi bi-check2-circle"></i> Criar Chamado
+            </button>
+
+            <div class="text-center mt-3">
+                <a asp-action="Index" class="text-decoration-none text-secondary fw-semibold">
+                    <i class="bi bi-arrow-left"></i> Voltar para lista
+                </a>
             </div>
+
         </form>
     </div>
 </div>

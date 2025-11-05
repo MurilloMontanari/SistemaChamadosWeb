@@ -1,10 +1,12 @@
-﻿   @model SistemaChamadosWeb.Models.Chamado
+﻿@model SistemaChamadosWeb.Models.Chamado
 @{
     ViewData["Title"] = "Detalhes do Chamado";
     var comentarios = ViewBag.Comentarios as List<SistemaChamadosWeb.Models.ChamadoComentario>;
     bool isAdmin = ViewBag.IsAdmin == true;
+}
 
-    @if (TempData["MensagemSucesso"] != null)
+<!-- Mensagens -->
+@if (TempData["MensagemSucesso"] != null)
 {
     <div class="alert alert-success text-center shadow-sm mb-4 animate__animated animate__fadeInDown"
          style="max-width:900px;margin:20px auto;border-radius:10px;">
@@ -23,7 +25,6 @@
 }
 
 <script>
-    //some sozinho depois de 4s com fade pra cima 
     setTimeout(() => {
         document.querySelectorAll('.alert').forEach(el => {
             el.classList.add('animate__fadeOutUp');
@@ -31,15 +32,24 @@
         });
     }, 4000);
 </script>
-}
 
 <div class="container">
-    <div class="card shadow-sm p-4 mb-4">
-        <h3 class="mb-3">
+
+    <!-- Cabeçalho -->
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-primary">
             <i class="bi bi-ticket-detailed"></i> @Model.Titulo
         </h3>
+
         <p><strong>Descrição:</strong> @Model.Descricao</p>
-        <p><strong>Status:</strong> <span class="badge bg-primary">@Model.Status</span></p>
+
+        <p>
+            <strong>Status:</strong>
+            <span class="badge @(Model.Status == "Aberto" ? "bg-success" : Model.Status == "Em Andamento" ? "bg-warning text-dark" : "bg-secondary")">
+                @Model.Status
+            </span>
+        </p>
+
         <p><strong>Prioridade:</strong> @Model.Prioridade</p>
         <p><strong>Data de Abertura:</strong> @Model.DataAbertura.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
         <p><strong>Aberto por:</strong> @Model.Usuario?.Nome (@Model.Usuario?.Email)</p>
@@ -49,14 +59,19 @@
         </a>
     </div>
 
+    <!-- Conteúdo Responsivo -->
     <div class="row g-4">
-        <div class="col-lg-7">
+
+        <!-- Comentários -->
+        <div class="col-12 col-lg-7">
             <div class="card shadow-sm p-3">
-                <h5 class="mb-3"><i class="bi bi-chat-dots"></i> Comentários</h5>
+                <h5 class="mb-3 d-flex align-items-center">
+                    <i class="bi bi-chat-dots me-2"></i> Comentários
+                </h5>
 
                 @if (comentarios == null || comentarios.Count == 0)
                 {
-                    <div class="alert alert-info">Ainda não há comentários.</div>
+                    <div class="alert alert-info text-center">Ainda não há comentários.</div>
                 }
                 else
                 {
@@ -64,12 +79,11 @@
                         @foreach (var c in comentarios)
                         {
                             <li class="list-group-item">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between">
                                     <strong>@c.Usuario?.Nome</strong>
-                                    <span class="text-muted">@c.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
-                                    </span>
+                                    <span class="text-muted small">@c.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
                                 </div>
-                                <div>@c.Texto</div>
+                                <div class="mt-1 text-break">@c.Texto</div>
                             </li>
                         }
                     </ul>
@@ -77,63 +91,59 @@
             </div>
         </div>
 
+        <!-- Painel TI -->
         @if (isAdmin)
         {
-            <div class="col-lg-5">
+            <div class="col-12 col-lg-5">
                 <div class="card shadow-sm p-3">
-                    <h5 class="mb-3"><i class="bi bi-tools"></i> Meu Painel</h5>
+                    <h5 class="mb-3 d-flex align-items-center">
+                        <i class="bi bi-tools me-2"></i> Meu Painel
+                    </h5>
 
                     <!-- Adicionar Comentário -->
-                    <form asp-action="AdicionarComentario" method="post">
+                    <form asp-action="AdicionarComentario" method="post" class="mb-3">
                         <input type="hidden" name="chamadoId" value="@Model.Id" />
-                        <div class="mb-2">
-                            <label class="form-label">Novo comentário</label>
-                            <textarea name="texto" class="form-control" rows="3" required></textarea>
-                        </div>
+                        <label class="form-label fw-semibold">Novo comentário</label>
+                        <textarea name="texto" class="form-control mb-2" rows="3" required></textarea>
+
                         <button type="submit" class="btn btn-success w-100">
                             <i class="bi bi-chat-right-text"></i> Adicionar Comentário
                         </button>
                     </form>
 
                     <!-- Finalizar Chamado -->
-                    @if (Context.Session.GetString("UsuarioTipo") == "Admin")
-                    {
-                        <!-- Botão que abre o modal -->
-                        <button type="button" class="btn btn-danger w-100 mt-3" data-bs-toggle="modal" data-bs-target="#finalizarModal">
-                            <i class="bi bi-check2-circle"></i> Finalizar Chamado
-                        </button>
-                    }
-
+                    <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#finalizarModal">
+                        <i class="bi bi-check2-circle"></i> Finalizar Chamado
+                    </button>
 
                 </div>
             </div>
         }
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="finalizarModal" tabindex="-1" aria-labelledby="finalizarModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content shadow-lg border-0">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="finalizarModalLabel">
-                        <i class="bi bi-clipboard-check"></i> Finalizar Chamado
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <form asp-action="FinalizarChamado" method="post">
-                        <input type="hidden" name="id" value="@Model.Id" />
+</div>
 
-                        <div class="mb-3">
-                            <label for="motivo" class="form-label">Motivo:</label>
-                            <textarea name="motivo" id="motivo" class="form-control" rows="4" placeholder="Descreva o que foi feito para encerrar o chamado..." required></textarea>
-                        </div>
+<!-- Modal Finalizar Chamado -->
+<div class="modal fade" id="finalizarModal" tabindex="-1" aria-labelledby="finalizarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="finalizarModalLabel">
+                    <i class="bi bi-clipboard-check"></i> Finalizar Chamado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="FinalizarChamado" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
 
-                        <div class="d-flex justify-content-end gap-2">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-danger">Finalizar</button>
-                        </div>
-                    </form>
-                </div>
+                    <label class="form-label fw-semibold">Motivo da Finalização:</label>
+                    <textarea name="motivo" class="form-control mb-3" rows="4" required></textarea>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Finalizar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
