@@ -8,7 +8,7 @@ namespace SistemaChamadosWeb.Models
     public class Chamado
     {
         [Key]
-        [Column("id")]   // <- no banco é "id"
+        [Column("id")]   
         public int Id { get; set; }
 
         [Column("titulo")]
@@ -24,12 +24,12 @@ namespace SistemaChamadosWeb.Models
         public string? Prioridade { get; set; }
 
         [Column("data_abertura")]
-        public DateTime DataAbertura { get; set; } = DateTime.UtcNow;
+        public DateTime DataAbertura { get; set; } 
 
         [Column("usuarioid")]
         public int UsuarioId { get; set; }
 
-        public Usuario Usuario { get; set; } = null!;  // Navegação para o usuário   
+        public Usuario Usuario { get; set; } = null!;  
     }
 }
 

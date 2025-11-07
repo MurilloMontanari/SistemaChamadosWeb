@@ -17,6 +17,7 @@ namespace SistemaChamadosWeb.Controllers
             _db = db;
         }
 
+
         // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()

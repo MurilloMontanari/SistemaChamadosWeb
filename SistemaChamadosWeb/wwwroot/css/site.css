@@ -1,4 +1,4 @@
-﻿/* 🌐 Layout Global */
+﻿/*Layout Global */
 body {
     background: #f6f8fb;
     font-family: 'Segoe UI', sans-serif;
@@ -6,7 +6,7 @@ body {
     padding: 0;
 }
 
-/* 🔷 Navbar moderna */
+/* Navbar moderna */
 .navbar {
     background: linear-gradient(90deg, #007bff, #0056d6);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -34,7 +34,7 @@ body {
     font-style: italic;
 }
 
-/* 🧱 Cards e Containers */
+/*Cards e Containers */
 .container {
     background: white;
     padding: 25px;

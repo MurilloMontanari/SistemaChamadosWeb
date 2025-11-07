@@ -9,13 +9,13 @@ namespace SistemaChamadosWeb.Data
 
         public DbSet<Usuario> Usuarios { get; set; } = null!;
         public DbSet<Chamado> Chamados { get; set; } = null!;
-        public DbSet<ChamadoComentario> Comentarios { get; set; } = null!; // <- NOVO
+        public DbSet<ChamadoComentario> Comentarios { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Chamado -> Usuario (1:N)  (você já tinha)
+            // Chamado -> Usuario (1:N)  
             modelBuilder.Entity<Chamado>()
                 .HasOne(c => c.Usuario)
                 .WithMany(u => u.Chamados)
@@ -24,14 +24,26 @@ namespace SistemaChamadosWeb.Data
             // Comentario -> Chamado (N:1)
             modelBuilder.Entity<ChamadoComentario>()
                 .HasOne(cc => cc.Chamado)
-                .WithMany()                     // mantém assim se você NÃO adicionou List<ChamadoComentario> em Chamado
+                .WithMany()
                 .HasForeignKey(cc => cc.ChamadoId);
 
             // Comentario -> Usuario (N:1)
             modelBuilder.Entity<ChamadoComentario>()
                 .HasOne(cc => cc.Usuario)
-                .WithMany()                     // mantém simples; não precisa coleção em Usuario
+                .WithMany()
                 .HasForeignKey(cc => cc.UsuarioId);
+
+
+
+            modelBuilder.Entity<Chamado>()
+                .Property(c => c.DataAbertura)
+                .HasColumnType("timestamp without time zone");
+
+            modelBuilder.Entity<ChamadoComentario>()
+                .Property(c => c.DataHora)
+                .HasColumnType("timestamp without time zone");
         }
+
     }
 }
+

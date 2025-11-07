@@ -49,14 +49,11 @@
                 @Model.Status
             </span>
         </p>
-
+             
         <p><strong>Prioridade:</strong> @Model.Prioridade</p>
-        <p><strong>Data de Abertura:</strong> @Model.DataAbertura.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+        <p><strong>Data de Abertura:</strong> @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")</p>
         <p><strong>Aberto por:</strong> @Model.Usuario?.Nome (@Model.Usuario?.Email)</p>
 
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left"></i> Voltar
-        </a>
     </div>
 
     <!-- Conteúdo Responsivo -->
@@ -81,7 +78,7 @@
                             <li class="list-group-item">
                                 <div class="d-flex flex-column flex-sm-row justify-content-between">
                                     <strong>@c.Usuario?.Nome</strong>
-                                    <span class="text-muted small">@c.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                                    <span class="text-muted small">@c.DataHora.ToString("dd/MM/yyyy HH:mm")</span>
                                 </div>
                                 <div class="mt-1 text-break">@c.Texto</div>
                             </li>
@@ -148,5 +145,11 @@
         </div>
     </div>
 </div>
+<<div class="text-center mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">

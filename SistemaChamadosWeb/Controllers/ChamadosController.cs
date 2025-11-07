@@ -30,8 +30,6 @@ namespace SistemaChamadosWeb.Controllers
             return View(chamados);
         }
 
-        
-        // GET: Chamados/MeusChamados
         public async Task<IActionResult> MeusChamados()
         {
             if (UsuarioId == null) return RedirectToAction("Login", "Account");
@@ -43,7 +41,6 @@ namespace SistemaChamadosWeb.Controllers
 
             return View(chamados);
         }
-
 
         [HttpGet]
         public IActionResult Create()
@@ -63,7 +60,7 @@ namespace SistemaChamadosWeb.Controllers
                 Descricao = descricao,
                 Prioridade = prioridade ?? "Média",
                 Status = "Aberto",
-                DataAbertura = DateTime.UtcNow,
+                DataAbertura = DateTime.Now, // ✅ Sempre UTC
                 UsuarioId = UsuarioId.Value
             };
 
@@ -72,7 +69,7 @@ namespace SistemaChamadosWeb.Controllers
 
             return RedirectToAction("Index");
         }
-        // GET: /Chamados/Details/5
+
         public async Task<IActionResult> Details(int id)
         {
             if (UsuarioId == null) return RedirectToAction("Login", "Account");
@@ -82,12 +79,8 @@ namespace SistemaChamadosWeb.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (chamado == null) return NotFound();
+            if (!IsAdmin && chamado.UsuarioId != UsuarioId.Value) return Forbid();
 
-            // regra: usuário comum só pode ver o próprio chamado
-            if (!IsAdmin && chamado.UsuarioId != UsuarioId.Value)
-                return Forbid();
-
-            // carregar comentários do chamado (mais recentes primeiro)
             var comentarios = await _db.Comentarios
                 .Where(cc => cc.ChamadoId == id)
                 .OrderByDescending(cc => cc.DataHora)
@@ -104,11 +97,8 @@ namespace SistemaChamadosWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AdicionarComentario(int chamadoId, string texto)
         {
-            if (UsuarioId == null)
-                return RedirectToAction("Login", "Account");
-
-            if (!IsAdmin)
-                return Forbid(); // apenas o TI pode comentar
+            if (UsuarioId == null) return RedirectToAction("Login", "Account");
+            if (!IsAdmin) return Forbid();
 
             if (string.IsNullOrWhiteSpace(texto))
             {
@@ -117,73 +107,33 @@ namespace SistemaChamadosWeb.Controllers
             }
 
             var chamado = await _db.Chamados.FindAsync(chamadoId);
-            if (chamado == null)
-                return NotFound();
+            if (chamado == null) return NotFound();
 
-            // 🚫 Bloqueia se o chamado já estiver fechado
             if (chamado.Status == "Fechado")
             {
                 TempData["MensagemErro"] = "Não é possível adicionar comentários em chamados finalizados.";
                 return RedirectToAction("Details", new { id = chamadoId });
             }
 
-            // ⚙️ Se o chamado estiver "Aberto", muda automaticamente para "Em Andamento"
             if (chamado.Status == "Aberto")
             {
                 chamado.Status = "Em Andamento";
                 _db.Chamados.Update(chamado);
             }
 
-            // Cria o comentário
             var comentario = new ChamadoComentario
             {
                 ChamadoId = chamadoId,
                 UsuarioId = UsuarioId.Value,
                 Texto = texto.Trim(),
-                DataHora = DateTime.UtcNow
-             };
+                DataHora = DateTime.Now // ✅ Sempre UTC
+            };
 
             _db.Comentarios.Add(comentario);
-            foreach (var entry in _db.ChangeTracker.Entries()
-         .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
-            {
-                var props = entry.Entity.GetType().GetProperties()
-                    .Where(p => p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?));
-
-                foreach (var prop in props)
-                {
-                    var value = prop.GetValue(entry.Entity);
-                    if (value is DateTime dt && dt.Kind == DateTimeKind.Unspecified)
-                        prop.SetValue(entry.Entity, DateTime.SpecifyKind(dt, DateTimeKind.Utc));
-                }
-            }
-
             await _db.SaveChangesAsync();
 
             TempData["MensagemSucesso"] = "Comentário adicionado com sucesso!";
             return RedirectToAction("Details", new { id = chamadoId });
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AlterarStatus(int id, string novoStatus)
-        {
-            var chamado = await _db.Chamados.FindAsync(id);
-            if (chamado == null) return NotFound();
-
-            // Validação: não permite alterar se estiver fechado
-            if (chamado.Status == "Fechado")
-            {
-                TempData["MensagemErro"] = "O chamado já está finalizado e não pode ser alterado.";
-                return RedirectToAction("Details", new { id });
-            }
-
-            chamado.Status = novoStatus;
-            await _db.SaveChangesAsync();
-
-            TempData["MensagemSucesso"] = "Status atualizado com sucesso!";
-            return RedirectToAction("Details", new { id });
         }
 
         [HttpPost]
@@ -197,14 +147,13 @@ namespace SistemaChamadosWeb.Controllers
 
             if (chamado.Status == "Fechado")
             {
-                TempData["MensagemErro"] = "Este chamado já foi encerrado anteriormente.";
+                TempData["MensagemErro"] = "Este chamado já foi encerrado.";
                 return RedirectToAction("Details", new { id });
             }
 
             chamado.Status = "Fechado";
             await _db.SaveChangesAsync();
 
-            // adiciona o comentário final
             if (!string.IsNullOrWhiteSpace(motivo))
             {
                 var comentarioFinal = new ChamadoComentario
@@ -212,8 +161,9 @@ namespace SistemaChamadosWeb.Controllers
                     ChamadoId = chamado.Id,
                     UsuarioId = UsuarioId.Value,
                     Texto = "🧰 " + motivo.Trim(),
-                    DataHora = DateTime.UtcNow
+                    DataHora = DateTime.Now // ✅ Sempre UTC
                 };
+
                 _db.Comentarios.Add(comentarioFinal);
                 await _db.SaveChangesAsync();
             }
@@ -221,7 +171,5 @@ namespace SistemaChamadosWeb.Controllers
             TempData["MensagemSucesso"] = "Chamado finalizado com sucesso!";
             return RedirectToAction("Details", new { id });
         }
-
     }
 }
-

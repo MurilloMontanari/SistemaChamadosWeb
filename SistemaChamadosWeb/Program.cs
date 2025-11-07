@@ -33,7 +33,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Ativa sessões (obrigatório antes das rotas)
+// Ativa sessões 
 app.UseSession();
 
 app.UseAuthorization();

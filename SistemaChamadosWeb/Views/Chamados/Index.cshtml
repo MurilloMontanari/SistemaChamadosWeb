@@ -52,7 +52,7 @@
                                     <td class="text-start fw-semibold">@chamado.Titulo</td>
                                     <td><span class="@statusClass">@chamado.Status</span></td>
                                     <td>@chamado.Prioridade</td>
-                                    <td>@chamado.DataAbertura.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@chamado.DataAbertura.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td>
                                         <a asp-action="Details" asp-route-id="@chamado.Id" class="btn btn-outline-primary btn-sm w-100 w-md-auto">
                                             <i class="bi bi-eye"></i> Detalhes

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SistemaChamadosWeb.Models
 {
@@ -18,9 +17,8 @@ namespace SistemaChamadosWeb.Models
         public string Texto { get; set; } = string.Empty;
 
         [Column("datahora")]
-        public DateTime DataHora { get; set; } = DateTime.UtcNow;
+        public DateTime DataHora { get; set; }
 
-        // navegações (opcional, mas útil)
         public Chamado Chamado { get; set; } = null!;
         public Usuario Usuario { get; set; } = null!;
     }
